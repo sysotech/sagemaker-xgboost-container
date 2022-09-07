@@ -4,10 +4,21 @@ import tempfile
 import threading
 import queue
 import re
+from typing import Optional
+
 import xgboost as xgb
 from xgboost import rabit
 from xgboost.core import Booster, XGBoostError
-from xgboost.callback import _fmt_metric as format_metric
+# from xgboost.callback import _fmt_metric as format_metric  # don't know why this isn't working!
+
+def format_metric(
+    data: str, metric: str, score: float, std: Optional[float]
+) -> str:
+    if std is not None:
+        msg = f"\t{data + '-' + metric}:{score:.5f}+{std:.5f}"
+    else:
+        msg = f"\t{data + '-' + metric}:{score:.5f}"
+    return msg
 
 
 TEMP_FILE_SUFFIX = ".sagemaker-ignore"
